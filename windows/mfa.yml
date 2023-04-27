@@ -6,7 +6,7 @@
   vars:
     source: '\\yaocsrfls2.ypfb-andina.com.bo\awx\mfa\'
     destination: 'c:\temp\dest\'
-   # user: 'user'
+    user: 'user'
    # pass: 'password'
 
   tasks:
@@ -20,5 +20,5 @@
     vars:
       ansible_become: true
       ansible_become_method: runas
-      #ansible_become_user: '{{ user }}'
+      ansible_become_user: '{{ user }}'
       #ansible_become_pass: '{{ pass }}'
