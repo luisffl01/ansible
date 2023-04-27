@@ -1,0 +1,24 @@
+---
+# copia archivos windows de un folder a otro
+- name: ping y copia 
+  hosts: all 
+  gather_facts: false
+  vars:
+    source: '\\yaocsrfls1.ypfb-andina.com.bo\unidad_L\mfa test\mysql8\'
+    destination: 'c:\temp\dest\'
+    user: 'user'
+    pass: 'password'
+
+  tasks:
+  - name: ping
+    win_ping:
+  - name: copia archivos
+    ansible.windows.win_copy:
+      src: '{{ source }}'
+      dest: '{{ destination }}'
+      remote_src: yes
+    vars:
+      ansible_become: true
+      ansible_become_method: runas
+      ansible_become_user: '{{ user }}'
+      ansible_become_pass: '{{ pass }}'
