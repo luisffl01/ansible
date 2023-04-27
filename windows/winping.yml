@@ -8,7 +8,7 @@
     destination: 'c:\temp\dest\'
     user: 'user'
     pass: 'password'
-
+    
   tasks:
   - name: ping
     win_ping:
@@ -22,4 +22,3 @@
       ansible_become_method: runas
       ansible_become_user: '{{ user }}'
       ansible_become_pass: '{{ pass }}'
-      
