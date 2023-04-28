@@ -1,13 +1,13 @@
 ---
 # copia archivos windows de un folder a otro
-- name: ping y copia 
+- name: copia archivos
   hosts: all 
   gather_facts: false
   vars:
-    source: '\\yaocsrfls1.ypfb-andina.com.bo\unidad_L\mfa test\mysql8\'
-    destination: 'c:\temp\dest\'
-    user: 'user'
-    passw: 'password'
+    source: '\\remoteserver'
+    destination: 'c:\localpath'
+    user: 'YPFB-ANDINA\awxuser' 
+    passw: ''
 
   tasks:
   - name: ping

@@ -1,9 +1,8 @@
 ---
-# copia archivos windows de un folder a otro
+# Ping a Equipos
 - name: ping
   hosts: all 
   gather_facts: false
-
   tasks:
   - name: ping
     win_ping:
