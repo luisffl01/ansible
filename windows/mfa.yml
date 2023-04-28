@@ -2,7 +2,7 @@
 # copia archivos windows de un folder de la red a otro
 - name: ping y copia 
   hosts: all 
-  gather_facts: false
+  gather_facts: true
   vars:
     source: '\\yaocsrfls2.ypfb-andina.com.bo\awx\mfa\'
     destination: 'c:\temp\dest\'
@@ -10,8 +10,6 @@
     passw: 'password'
 
   tasks:
-  - name: ping
-    win_ping:
   - name: copia archivos
     win_copy:
       src: '{{ source }}'
