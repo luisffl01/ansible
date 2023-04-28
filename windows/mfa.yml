@@ -7,7 +7,7 @@
     source: '\\yaocsrfls2.ypfb-andina.com.bo\awx\mfa\'
     destination: 'c:\temp\dest\'
     user: 'user'
-    passw: '{{vault_user1}}'
+    passw: '{{awxuser}}'
   tasks:
   - name: copia archivos
     win_copy:
