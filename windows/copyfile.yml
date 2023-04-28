@@ -7,7 +7,7 @@
     source: '\\yaocsrfls1.ypfb-andina.com.bo\unidad_L\mfa test\mysql8\'
     destination: 'c:\temp\dest\'
     user: 'user'
-    pass: 'password'
+    passw: 'password'
 
   tasks:
   - name: ping
@@ -21,5 +21,5 @@
       ansible_become: true
       ansible_become_method: runas
       ansible_become_user: '{{ user }}'
-      ansible_become_pass: '{{ pass }}'
+      ansible_become_pass: '{{ passw }}'
     
