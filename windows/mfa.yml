@@ -13,7 +13,7 @@
   - name: ping
     win_ping:
   - name: copia archivos
-    ansible.windows.win_copy:
+    win_copy:
       src: '{{ source }}'
       dest: '{{ destination }}'
       remote_src: yes
