@@ -6,12 +6,10 @@
   vars:
     source: '\\remoteserver'
     destination: 'c:\localpath'
-    user: 'YPFB-ANDINA\awxuser' 
-    passw: ''
+    user: 'user' 
+    passw: 'pass'
 
   tasks:
-  - name: ping
-    win_ping:
   - name: copia archivos
     ansible.windows.win_copy:
       src: '{{ source }}'
