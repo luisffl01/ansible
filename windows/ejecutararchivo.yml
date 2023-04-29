@@ -5,7 +5,7 @@
 
   vars:
     #ruta_archivo_exe: 'C:\Users\Public\MFA\LogInAnd\Replicar.exe'
-    ruta_archivo_exe: 'C:\Windows\System32\ruta_archivo_exe:'
+    ruta_archivo_exe: 'C:\Windows\System32\ipconfig.exe:'
 
   tasks:
     - name: Ejecutar archivo .exe
