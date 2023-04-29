@@ -15,9 +15,9 @@
       src: '{{ source }}'
       dest: '{{ destination }}'
       remote_src: yes
-    #vars:
-    #  ansible_become: true
-    #  ansible_become_method: runas
-    #  ansible_become_user: '{{ user }}'
-    #  ansible_become_pass: '{{ passw }}'
+    vars:
+      ansible_become: true
+      ansible_become_method: runas
+      ansible_become_user: '{{ user }}'
+      ansible_become_pass: '{{ passw }}'
     
