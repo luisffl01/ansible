@@ -1,0 +1,33 @@
+---
+- name: Agregar valor a la variable de entorno PATH
+  hosts: all
+  gather_facts: false
+  vars:
+    valor_path: 'C:\Users\Public\MFA\instantclient_21_3\'
+    var_tnsadmin: '\\yaocsrfls1.ypfb-andina.com.bo\unidad_p\Network' 
+
+  tasks:
+    - name: Obtener valor actual de la variable PATH
+      win_shell: echo $env:path
+      register: path_actual
+
+    - name: Agregar valor a la variable PATH
+      win_environment:
+        name: PATH
+        value: "{{ path_actual.stdout }};{{ valor_path }}"
+        state: present
+        level: machine
+      become: yes
+
+    - name: Modifica valor a la variable TNS_ADMIN
+      win_environment:
+        name: TNS_ADMIN
+        value: "{{ var_tnsadmin }}"
+        state: present
+        level: machine
+      become: yes
+      register: ver_tns_admin
+
+    - name: Mostrar resultado de la modificación del registro
+      debug:
+        var: ver_tns_admin
