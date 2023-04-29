@@ -7,7 +7,7 @@
     source: '\\remoteserver'
     destination: 'c:\localpath'
     user: 'user'
-    pass: 'pass'
+    passw: 'passw'
  
   tasks:
   - name: copia archivos
@@ -19,5 +19,5 @@
       ansible_become: true
       ansible_become_method: runas
       ansible_become_user: '{{ user }}'
-      ansible_become_pass: '{{ pass }}'
+      ansible_become_pass: '{{ passw }}'
     
