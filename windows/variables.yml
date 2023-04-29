@@ -18,6 +18,11 @@
         state: present
         level: machine
       become: yes
+      register: ver_tns_admin
+      
+    - name: Mostrar resultado de la modificación del registro
+      debug:
+        var: ver_tns_admin
 
     - name: Modifica valor a la variable TNS_ADMIN
       win_environment:
