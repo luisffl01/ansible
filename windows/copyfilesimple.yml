@@ -8,7 +8,7 @@
     destination: 'c:\localpath'
     user: 'user'
     vault_credential_id: passw
-    passw: "{{ lookup('vault_credential_id_passw') }}"
+    password: "{{ lookup('ansible','vault_credential_id_passw') }}"
   tasks:
   - name: copia archivos
     ansible.windows.win_copy:
@@ -19,5 +19,5 @@
       ansible_become: true
       ansible_become_method: runas
       ansible_become_user: '{{ user }}'
-      ansible_become_pass: '{{ passw }}'
+      ansible_become_pass: '{{ password }}'
     
