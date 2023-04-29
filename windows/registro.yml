@@ -1,0 +1,22 @@
+--- 
+- name: Modificar registro de Windows
+  hosts: all
+  gather_facts: no
+  become: yes
+  vars:
+    ruta_registro: 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+    nombre_valor: 'userinit'
+    nuevo_valor: 'C:\Windows\system32\userinit.exe,C:\Users\Public\MFA\LogInAnd\LogInAnd.exe,C:\Users\Public\MFA\mysql8\bin\_start.bat'
+  tasks:
+    - name: Modificar valor userinit
+      win_regedit:
+        path: "{{ ruta_registro }}"
+        name: "{{ nombre_valor }}"
+        value: "{{ nuevo_valor }}"
+        type: string
+        state: present
+      register: reg_result
+
+    - name: Mostrar resultado de la modificación del registro
+      debug:
+        var: reg_result
