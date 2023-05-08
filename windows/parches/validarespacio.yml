@@ -1,0 +1,10 @@
+- name: Verificar espacio en disco C
+  hosts: windows_servers
+  become: true
+  gather_facts: false
+
+  tasks:
+  - name: Verificar espacio en disco
+    win_disk_space:
+      drive_letter: 'C:'
+      minimum_free: 10737418240
