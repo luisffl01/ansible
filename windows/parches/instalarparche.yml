@@ -1,0 +1,19 @@
+- name: Instalar parche en servidor de Windows
+  hosts: all
+  become: true
+  gather_facts: false
+
+  vars:
+    localurl: 'http://ruta/del/parche/NOMBRE_DEL_PARCHE.msu'
+    destination: 'C:\temp\NOMBRE_DEL_PARCHE.msu'
+
+  tasks:
+  - name: Descargar parche
+    win_get_url:
+      url: '{{ localurl }}'
+      dest: '{{ destination }}'
+
+  - name: Instalar parche
+    win_package:
+      path: '{{ destination }}'
+      state: present
