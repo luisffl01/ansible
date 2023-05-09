@@ -1,0 +1,26 @@
+---
+- name: Configurar fondo de pantalla en Windows
+  hosts: windows
+  gather_facts: no
+
+  vars:
+    localurl: 'http://local/Wallpaper2023.jpg'
+    destination: 'C:\Users\ {{ ansible_env.USERNAME }} \Pictures\Wallpaper2023.jpg'
+
+  tasks:
+  - name: Copiar imagen de fondo de pantalla
+    win_get_url:
+      url: '{{ localurl }}'
+      dest: '{{ destination }}'
+
+  - name: Establecer imagen de fondo de pantalla
+    win_shell: reg add "HKCU\Control Panel\Desktop" /v Wallpaper /t REG_SZ /d " {{ destination }} " /f
+
+  - name: Establecer el estilo de fondo de pantalla
+    win_shell: reg add "HKCU\Control Panel\Desktop" /v WallpaperStyle /t REG_SZ /d 2 /f
+
+  - name: Actualizar la configuración del fondo de pantalla
+    win_shell: rundll32.exe user32.dll,UpdatePerUserSystemParameters
+
+  #- name: Reiniciar el Explorador de Windows
+  #  win_shell: taskkill /f /im explorer.exe && start explorer.exe
