@@ -2,12 +2,13 @@
 # Mensaje a Equipos
 - name: Mensaje
   hosts: all 
-  gather_facts: false
+  gather_facts: no
   collections:
-  - name: community.windows
-  
+    - community.windows
+
   tasks:
   - name: Mensaje
     win_msg:
       display_seconds: 60
+      title: "¡Atención!"
       msg: 'Mensaje de awx'
