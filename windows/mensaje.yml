@@ -1,0 +1,11 @@
+---
+# Ping a Equipos
+- name: Mensaje a PC
+  hosts: all 
+  gather_facts: false
+
+  tasks:
+  - name: Mensaje
+    community.windows.win_msg:
+      display_seconds: 60
+      msg: 'Mensaje de awx'
