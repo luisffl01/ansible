@@ -3,6 +3,9 @@
 - name: Mensaje
   hosts: all 
   gather_facts: false
+  collections:
+  - name: community.windows
+  
   tasks:
   - name: Mensaje
     win_msg:
