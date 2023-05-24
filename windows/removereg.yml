@@ -1,0 +1,11 @@
+--- 
+- name: Eliminar registro de Windows
+  hosts: all
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Eliminar registro userinit
+      win_shell: |
+        Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon' -Name 'userinit' -ErrorAction Stop
+      become: true
+      become_user: Administrator
