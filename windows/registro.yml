@@ -12,11 +12,6 @@
       win_regedit:
         path: "{{ ruta_registro }}"
         name: "{{ nombre_valor }}"
-        value: "{{ nuevo_valor }}"
+        data: "{{ nuevo_valor }}"
         type: string
         state: present
-  #    register: verify_result
-    
-  #  - name: Mostrar resultado de la modificación del registro
-  #    debug:
-  #      var: verify_result
