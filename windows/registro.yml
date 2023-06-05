@@ -15,16 +15,8 @@
         value: "{{ nuevo_valor }}"
         type: string
         state: present
-      register: reg_result
+  #    register: verify_result
     
-    - name: Verificar cambios
-      win_regedit:
-        path: "{{ ruta_registro }}"
-        name: "{{ nombre_valor }}"
-        type: string
-      register: verify_result
-
-
-    - name: Mostrar resultado de la modificación del registro
-      debug:
-        var: verify_result
+  #  - name: Mostrar resultado de la modificación del registro
+  #    debug:
+  #      var: verify_result
