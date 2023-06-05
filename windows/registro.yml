@@ -1,7 +1,7 @@
 --- 
 - name: Modificar registro de Windows
   hosts: all
-  gather_facts: no
+  gather_facts: false
   become: yes
   vars:
     ruta_registro: 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
@@ -16,7 +16,15 @@
         type: string
         state: present
       register: reg_result
+    
+    - name: Verificar cambios
+      win_regedit:
+        path: "{{ ruta_registro }}"
+        name: "{{ nombre_valor }}"
+        type: string
+      register: verify_result
+
 
     - name: Mostrar resultado de la modificación del registro
       debug:
-        var: reg_result
+        var: verify_result
