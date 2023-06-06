@@ -1,0 +1,17 @@
+--- 
+- name: Modificar registro de Windows
+  hosts: all
+  gather_facts: false
+  become: yes
+  vars:
+    ruta_registro: 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+    nombre_valor: 'Userinit'
+    nuevo_valor: 'C:\Windows\system32\userinit.exe'
+  tasks:
+    - name: Modificar valor userinit
+      win_regedit:
+        path: "{{ ruta_registro }}"
+        name: "{{ nombre_valor }}"
+        data: "{{ nuevo_valor }}"
+        type: string
+        state: present
