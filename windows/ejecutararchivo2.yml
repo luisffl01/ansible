@@ -1,0 +1,21 @@
+- name: Ejecutar archivos .exe
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  vars:
+    ruta_archivo1_exe: 'C:\Windows\System32\ipconfig.exe'
+    ruta_archivo2_exe: 'C:\Windows\System32\ipconfig.exe'
+
+  tasks:
+    - name: Ejecutar archivo 1 .exe
+      win_command: "{{ ruta_archivo1_exe }}"
+      register: exe_result
+
+    - name: Mostrar resultado de la ejecución del archivo .exe
+      debug:
+        var: exe_result
+    
+    - name: Ejecutar archivo 2 .exe
+      win_command: "{{ ruta_archivo2_exe }}"
+      register: exe_result
