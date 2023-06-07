@@ -1,0 +1,9 @@
+---
+# Reiniciar Equipos
+- name: Reiniciar
+  hosts: all 
+  gather_facts: no
+
+  tasks:
+  - name: Reiniciar
+    windows.win_reboot:
