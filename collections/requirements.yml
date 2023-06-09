@@ -3,3 +3,6 @@ collections:
   # Install a collection from Ansible Galaxy.
   - name: community.windows
     source: https://galaxy.ansible.com
+  - name: community.general.json_query
+    source: https://galaxy.ansible.com
+
