@@ -1,8 +1,8 @@
 ---
 collections:
   # Install a collection from Ansible Galaxy.
-  - name: community.windows
-    source: https://galaxy.ansible.com
-  - name: community.general.json_query
+  #  - name: community.windows
+  #    source: https://galaxy.ansible.com
+  - name: community.general
     source: https://galaxy.ansible.com
 
