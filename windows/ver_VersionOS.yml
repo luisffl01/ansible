@@ -1,0 +1,17 @@
+--- 
+- name: Ver versión de Sistema Operativo Windows
+  hosts: all
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: Obtener información del sistema operativo
+      win_shell: |
+        $osInfo = Get-WmiObject -Class Win32_OperatingSystem
+        $osVersion = $osInfo.Version
+        $osCaption = $osInfo.Caption
+        $osVersion, $osCaption
+      register: os_info
+
+    - name: Imprimir versión del sistema operativo
+      debug:
+        var: os_info.stdout_lines
