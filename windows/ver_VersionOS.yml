@@ -15,5 +15,5 @@
       debug:
         msg: |
           Nombre del Equipo | Versión del Sistema Operativo
-          {{ os_version.stdout | from_json | json_query('[].{Nombre: CSName, Versión: Caption}') | tablesort }}
+          {{ os_version.stdout | from_json | json_query('[].{Nombre: CSName, Versión: Caption}') }}
 
