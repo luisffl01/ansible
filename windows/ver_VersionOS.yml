@@ -13,4 +13,6 @@
 
     - name: Mostrar resultado en formato de tabla
       debug:
-        msg: "{{ os_version | json_query('[].{Nombre: CSName, Version: Caption}') }}"
+        msg: "{{ os_version.json | json_query(query) }}"
+      vars:
+        query: "[*].{Nombre: CSName, Version: Caption}"
