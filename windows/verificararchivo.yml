@@ -15,7 +15,7 @@
     - name: Write log if file exists
       ansible.windows.win_shell: |
         if (${{ file_stat.stat.exists }}) {{
-          $LogMessage = "$env:COMPUTERNAME"
+          $LogMessage = $env:COMPUTERNAME
           $LogMessage | Out-File -FilePath "{{ logfile }}" -Append
         }}
       when: file_stat.stat.exists
