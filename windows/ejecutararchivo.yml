@@ -4,7 +4,6 @@
   become: yes
 
   vars:
-    #ruta_archivo_exe: 'C:\Users\Public\MFA\LogInAnd\Replicar.exe'
     ruta_archivo_exe: 'C:\Windows\System32\ipconfig.exe'
 
   tasks:
@@ -14,4 +13,4 @@
 
     - name: Mostrar resultado de la ejecución del archivo .exe
       debug:
-        var: exe_result
+        var: exe_result.stdout_lines

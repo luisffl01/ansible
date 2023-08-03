@@ -1,18 +1,16 @@
-- name: Ejecutar archivos .exe
+- name: Ejecutar powershell o comando
   hosts: all
   gather_facts: false
   become: yes
 
   vars:
-    archivo_exe: 'C:\Windows\System32\ipconfig.exe'
+    comando: 'C:\Windows\System32\ipconfig.exe'
 
   tasks:
-    - name: Ejecutar archivo .exe
-      win_shell: "{{ archivo_exe }}"
-      args:
-        executable: cmd
-      register: salida_exe
+    - name: Ejecutar Powershell o comando
+      win_shell: "{{ comando }}"
+      register: salida
 
-    - name: Mostrar resultado de la ejecución del archivo .exe
+    - name: Mostrar resultado de la ejecución
       debug:
-        var: salida_exe
+        var: salida.stdout_lines
