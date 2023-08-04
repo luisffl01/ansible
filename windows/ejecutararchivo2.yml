@@ -1,14 +1,14 @@
-- name: Ejecutar powershell o comando
+- name: Ejecutar script de Powershell
   hosts: all
   gather_facts: false
   become: yes
 
   vars:
-    comando: 'C:\Windows\System32\ipconfig.exe'
-
+    script: 'C:\script.ps'
   tasks:
-    - name: Ejecutar Powershell o comando
-      win_shell: "{{ comando }}"
+    - name: Ejecutar script
+      win_shell: |
+        powershell.exe -ExecutionPolicy Bypass -File "{{ script }}"
       register: salida
 
     - name: Mostrar resultado de la ejecución
