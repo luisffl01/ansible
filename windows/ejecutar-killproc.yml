@@ -13,5 +13,5 @@
       ignore_errors: yes
 
     - name: Matar el proceso
-      win_shell: "Stop-Process -Id {{ process_id.stdout }} " 
+      win_shell: "taskkill /pid {{ process_id.stdout }} " 
       when: process_id.stdout | int > 0
