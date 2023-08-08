@@ -4,7 +4,7 @@
   become: yes
 
   vars:
-    process_name: "nombre_del_proceso.exe"  # Reemplazar con el nombre del proceso que se desea matar
+    process_name: "nombre_del_proceso"  # Reemplazar con el nombre del proceso que se desea matar
 
   tasks:
     - name: Obtener el ID del proceso
