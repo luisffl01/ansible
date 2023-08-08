@@ -10,7 +10,8 @@
     - name: Obtener el ID del proceso
       win_shell: "Get-Process -Name {{ process_name }} | Select-Object -ExpandProperty Id"
       register: process_id
+      ignore_errors: yes
 
     - name: Matar el proceso
-      win_shell: "Stop-Process -Id {{ process_id.stdout }} -Force"
+      win_shell: "Stop-Process -Id {{ process_id.stdout }} -Force -Confirm:$false"
       when: process_id.stdout | int > 0
