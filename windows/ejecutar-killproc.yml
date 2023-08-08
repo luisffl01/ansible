@@ -13,5 +13,5 @@
       ignore_errors: yes
 
     - name: Matar el proceso
-      win_shell: "Stop-Process -Id {{ process_id.stdout }} -Force -Confirm:$false"
+      win_shell: "Stop-Process -Id {{ process_id.stdout }} -Confirm:$false"
       when: process_id.stdout | int > 0
