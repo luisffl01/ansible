@@ -1,0 +1,23 @@
+---
+- name: Verificar existencia de una carpeta en servidores Linux
+  hosts: all
+  gather_facts: false
+  become: yes
+
+  vars:
+    folder: 'ruta folder'  
+  tasks:
+    - name: Verificar si la carpeta existe
+      stat:
+        path: "{{ folder }}" # Reemplaza con la ruta de la carpeta que deseas verificar
+      register: folder_stat
+
+    - name: Mostrar estado de la carpeta
+      debug:
+        msg: "La carpeta existe en {{ inventory_hostname }}" # Imprimirá este mensaje si la carpeta existe
+      when: folder_stat.stat.exists
+
+    - name: Mostrar estado de la carpeta
+      debug:
+        msg: "La carpeta no existe en {{ inventory_hostname }}" # Imprimirá este mensaje si la carpeta no existe
+      when: not folder_stat.stat.exists
