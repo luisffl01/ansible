@@ -1,12 +1,13 @@
-- name: Eliminar parche del disco local de servidor de Windows
+- name: Eliminar archivo del disco local del equipo
   hosts: all
   become: true
   gather_facts: false
+  
   vars:
     filename: 'C:\temp\NOMBRE_DEL_PARCHE.msu'
 
   tasks:
-  - name: Eliminar parche
+  - name: Eliminar Archivo
     win_file:
       path: '{{ filename }}'
       state: absent
