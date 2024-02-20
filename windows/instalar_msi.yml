@@ -1,0 +1,13 @@
+---
+# Instala un archivo msi en un equipo
+- name: Instalar Archivo MSI
+  hosts: all 
+  gather_facts: false
+  vars:
+    archivo_msi: 'c:\localpath\localfile.msi'
+
+  tasks:
+  - name: Ejecutar instalación del archivo MSI
+    win_shell: |
+      Start-Process msiexec.exe -Wait -ArgumentList '/i {{ archivo_msi }} /qn'
+    
