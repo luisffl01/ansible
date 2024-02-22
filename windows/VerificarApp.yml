@@ -1,0 +1,22 @@
+--- 
+- name: verifica si un archivo de Windows existe
+  hosts: all
+  gather_facts: false
+  become: yes
+  vars:
+    aplicacion: "nombre aplicación"
+  tasks:
+    - name: Verificar si la aplicación está instalada
+      win_shell: Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -eq "{{ aplicacion }}" }
+      register: app_check_result
+      ignore_errors: yes
+
+    - name: Mostrar estado de la aplicación
+      debug:
+        msg: "La aplicación está instalada en el sistema."
+      when: app_check_result.rc == 0
+
+    - name: Mostrar estado de la aplicación
+      debug:
+        msg: "La aplicación no está instalada en el sistema."
+      when: app_check_result.rc != 0
