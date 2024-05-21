@@ -1,4 +1,4 @@
-- name: Ejecutar comando para Eliminar Carpeta
+- name: Elimina Carpeta si existe
   hosts: all
   gather_facts: false
   become: yes
@@ -7,7 +7,13 @@
     folder_name: "nombre_del_folder"  # Reemplazar con el nombre del folder para eliminar
 
   tasks:
-    - name: Eliminar Folder
-      win_shell: "Remove-Item -Path {{ folder_name }} -Recurse -Force" 
-      register: process_id
-      ignore_errors: yes
+    - name: Verificar si el folder existe
+      win_stat:
+        path: "{{ folder_name }}"
+      register: folder_info
+
+    - name: Eliminar el folder si existe
+      win_file:
+        path: "{{ folder_name }}"
+        state: absent
+      when: folder_info.stat.exists
