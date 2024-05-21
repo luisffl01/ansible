@@ -8,7 +8,7 @@
     nombre_valor: 'Userinit'
   tasks:
     - name: Mostrar el valor actual del registro
-      ansible.builtin.win_command: reg query "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v Userinit
+      ansible.builtin.win_command: reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v "Userinit"
 
     - name: Mostrar valor actual
       debug:
