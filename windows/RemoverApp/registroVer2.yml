@@ -1,0 +1,20 @@
+--- 
+- name: Ver un valor de registro de Windows
+  hosts: all
+  gather_facts: false
+  become: yes
+  vars:  
+    #HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon   
+    registry_key: "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\WinLogon"
+    registry_value: "Userinit"
+
+  tasks:
+
+    - name: Get registry value
+      win_reg_stat:
+        path: "{{ registry_key }}\\{{ registry_value }}"
+      register: reg_value
+
+    - debug:
+        msg: "Valor Registro: {{ reg_value.value }}"
+        
