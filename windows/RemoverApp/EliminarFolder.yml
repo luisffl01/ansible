@@ -1,0 +1,13 @@
+- name: Ejecutar comando para Eliminar Carpeta
+  hosts: all
+  gather_facts: false
+  become: yes
+
+  vars:
+    folder_name: "nombre_del_folder"  # Reemplazar con el nombre del folder para eliminar
+
+  tasks:
+    - name: Eliminar Folder
+      win_shell: "Remove-Item -Path {{ folder_name }} -Recurse -Force" 
+      register: process_id
+      ignore_errors: yes
