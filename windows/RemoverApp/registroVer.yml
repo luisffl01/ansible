@@ -6,7 +6,7 @@
   vars:
     ruta_registro: 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
     nombre_valor: 'Userinit'
-    nuevo_valor: 'C:\Windows\system32\userinit.exe'
+    #nuevo_valor: 'C:\Windows\system32\userinit.exe'
   tasks:
     - name: Mostrar el valor actual del registro
       ansible.builtin.win_command: reg query ""{{ ruta_registro }}"" /v "{{ nombre_valor }}"
