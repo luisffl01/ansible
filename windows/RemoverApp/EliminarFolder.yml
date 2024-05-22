@@ -12,6 +12,16 @@
         path: "{{ folder_name }}"
       register: folder_info
 
+    - name: Debug message - Folder existe
+      debug:
+        msg: "El folder {{ folder_name }} exists."
+      when: folder_info.stat.exists
+
+    - name: Debug message - Folder no existe
+      debug:
+        msg: "El folder {{ folder_name }} no existe."
+      when: not folder_info.stat.exists
+
     - name: Eliminar el folder si existe
       win_file:
         path: "{{ folder_name }}"
