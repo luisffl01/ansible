@@ -1,0 +1,36 @@
+---
+- name: Bloquear usuario en un servidor Linux
+  hosts: all
+  become: yes
+  gather_facts: false
+
+  vars:
+    user_to_block: "usuario_bloqueado"  # Reemplazar con el nombre del usuario a bloquear
+
+  tasks:
+    - name: Deshabilitar el acceso al usuario
+      user:
+        name: "{{ user_to_block }}"
+        shell: /sbin/nologin
+
+    - name: Bloquear la cuenta del usuario
+      command: "usermod -L {{ user_to_block }}"
+      args:
+        warn: false
+
+    - name: Verificar si existen procesos en ejecución del usuario
+      shell: "pgrep -u {{ user_to_block }} || true"
+      register: user_processes
+
+    - name: Finalizar procesos en ejecución del usuario (si existen)
+      shell: "pkill -u {{ user_to_block }}"
+      when: user_processes.stdout != ""
+      ignore_errors: yes
+
+    - name: Confirmar que el usuario ha sido bloqueado
+      shell: "passwd -S {{ user_to_block }}"
+      register: user_status
+
+    - name: Mostrar estado del usuario bloqueado
+      debug:
+        msg: "Estado del usuario {{ user_to_block }}: {{ user_status.stdout }}"

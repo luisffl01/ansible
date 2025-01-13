@@ -1,0 +1,35 @@
+# crea usaurio
+- name: Crear usuario osadmin
+  hosts: all 
+  become: yes
+  gather_facts: false
+
+  vars:
+    osadmin_username: "osadmin"
+    osadmin_password: "{{ 'secure_password' | password_hash('sha512') }}"
+    osadmin_shell: "/bin/bash"
+    osadmin_home: "/home/osadmin"
+
+  tasks:
+    - name: Crear el usuario osadmin
+      user:
+        name: "{{ osadmin_username }}"
+        password: "{{ osadmin_password }}"
+        shell: "{{ osadmin_shell }}"
+        home: "{{ osadmin_home }}"
+        state: present
+
+    - name: Crear el directorio home si no existe
+      file:
+        path: "{{ osadmin_home }}"
+        state: directory
+        owner: "{{ osadmin_username }}"
+        group: "{{ osadmin_username }}"
+        mode: '0755'
+
+    - name: Agregar el usuario osadmin al grupo sudo (opcional)
+      user:
+        name: "{{ osadmin_username }}"
+        groups: "sudo"
+        append: yes
+    

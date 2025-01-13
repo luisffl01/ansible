@@ -1,0 +1,39 @@
+---
+- name: Habilitar una IP en la zona sshzone de firewalld
+  hosts: all
+  become: yes
+  gather_facts: false
+
+  vars:
+    ip_to_allow: "192.168.1.100"  # Reemplazar con la IP que se desea habilitar
+    firewall_zone: "sshzone"
+
+  tasks:
+    - name: Verificar que firewalld está instalado
+      package:
+        name: firewalld
+        state: present
+
+    - name: Asegurar que el servicio firewalld está en ejecución
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+
+    - name: Agregar la IP a la zona especificada
+      firewalld:
+        zone: "{{ firewall_zone }}"
+        source: "{{ ip_to_allow }}"
+        state: enabled
+        permanent: yes
+
+    - name: Recargar configuración de firewalld
+      command: firewall-cmd --reload
+
+    - name: Verificar que la IP está habilitada en la zona
+      command: firewall-cmd --zone={{ firewall_zone }} --list-sources
+      register: firewall_sources
+
+    - name: Mostrar las fuentes habilitadas en la zona
+      debug:
+        msg: "Fuentes actuales en {{ firewall_zone }}: {{ firewall_sources.stdout }}"
