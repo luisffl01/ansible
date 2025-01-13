@@ -1,35 +1,44 @@
 # crea usaurio
-- name: Crear usuario osadmin
+- name: Crear usuario de sistema operativo
   hosts: all 
   become: yes
   gather_facts: false
 
   vars:
-    osadmin_username: "osadmin"
-    osadmin_password: "{{ 'secure_password' | password_hash('sha512') }}"
-    osadmin_shell: "/bin/bash"
-    osadmin_home: "/home/osadmin"
+    username: "nuevo_usuario"  # Reemplazar con el nombre del usuario
+    user_password: "{{ 'secure_password' | password_hash('sha512') }}"  # Cambiar la contraseña según sea necesario
+    user_shell: "/bin/bash"
+    user_home: "/home/{{ username }}"
 
   tasks:
-    - name: Crear el usuario osadmin
+    - name: Crear el usuario
       user:
-        name: "{{ osadmin_username }}"
-        password: "{{ osadmin_password }}"
-        shell: "{{ osadmin_shell }}"
-        home: "{{ osadmin_home }}"
+        name: "{{ username }}"
+        password: "{{ user_password }}"
+        shell: "{{ user_shell }}"
+        home: "{{ user_home }}"
         state: present
 
     - name: Crear el directorio home si no existe
       file:
-        path: "{{ osadmin_home }}"
+        path: "{{ user_home }}"
         state: directory
-        owner: "{{ osadmin_username }}"
-        group: "{{ osadmin_username }}"
+        owner: "{{ username }}"
+        group: "{{ username }}"
         mode: '0755'
 
-    - name: Agregar el usuario osadmin al grupo sudo (opcional)
+    - name: Agregar el usuario al grupo sudo (opcional)
       user:
-        name: "{{ osadmin_username }}"
+        name: "{{ username }}"
         groups: "sudo"
         append: yes
-    
+
+    - name: Configurar mensaje de bienvenida (motd) para el usuario (opcional)
+      copy:
+        dest: "{{ user_home }}/welcome.txt"
+        content: |
+          Bienvenido, {{ username }}.
+          Este es tu servidor Linux.
+        owner: "{{ username }}"
+        group: "{{ username }}"
+        mode: '0644'
