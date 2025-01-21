@@ -1,0 +1,20 @@
+---
+- name: Verificar existencia de una carpeta en servidores Linux
+  hosts: all
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: Find PDF files
+      win_find:
+        paths: "C:\"
+        patterns: "*.pdf"
+        excludes:
+          - "C:\\Windows"
+          - "C:\\Program Files"
+          - "C:\\Program Files (x86)"
+      register: pdf_files
+
+    - name: Display found PDF files
+      debug:
+        var: pdf_files.files
