@@ -1,7 +1,7 @@
 ---
 - name: Buscar archivos con extensiones específicas en todos los discos y guardar reporte por equipo
   hosts: all
-  gather_facts: false
+  gather_facts: yes
   become: yes
 
   tasks:
@@ -9,40 +9,64 @@
       win_shell: |
         Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null } | Select-Object -ExpandProperty Name
       register: drives
+    
+    - name: Mostrar hora de finalización - Obtener las unidades disponibles
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
 
     - name: Construir la lista de rutas para buscar
       set_fact:
-        search_paths: "{{ drives.stdout_lines | map('regex_replace', '(.*)', '\\1:\\') | list }}"
+        search_paths: "{{ drives.stdout_lines | map('regex_replace', '^(.*)$', '\\1:\\\\') | list }}"
+    
+    - name: Mostrar hora de finalización - Construir la lista de rutas para buscar
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+
+    - name: Verificar las rutas generadas
+      debug:
+        var: search_paths
 
     - name: Buscar archivos con extensiones .pdf, .hsc y .shp en todas las unidades
       win_find:
         paths: "{{ search_paths }}"
         patterns:
           - "*.pdf"
-          - "*.hsc"
+          #- "*.hsc"
           - "*.shp"
         recurse: yes
       register: found_files
+
+    - name: Mostrar hora de finalización - Buscar archivos con extensiones
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
 
     - name: Filtrar archivos excluyendo ciertos directorios
       set_fact:
         filtered_files: >
           {{ found_files.files | selectattr('path', 'search', '^(?!C:\\\\Windows|C:\\\\Program Files|C:\\\\Program Files \\(x86\\)).*') | list }}
 
+    - name: Mostrar hora de finalización - Filtrar
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+
     - name: Recolectar información y formatear resultados
       set_fact:
         formatted_files: >
           {{ filtered_files | map('extract', ['path', 'name', 'size']) | map('join', ',') | list }}
 
+    - name: Mostrar hora de finalización - formatear resultados
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+
     - name: Agregar el nombre del equipo a cada registro
       set_fact:
         output_lines: >
-          {{ ['Equipo: ' + ansible_host] + formatted_files }}
+          {{ ['Equipo: ' + ansible_hostname] + formatted_files }}
 
     - name: Guardar información en un archivo de texto con el nombre del equipo
       win_copy:
         content: "{{ output_lines | join('\n') }}"
-        dest: "L:\\LF\\log\\{{ ansible_hostname }}.txt"
+        dest: "c:\\temp\\{{ ansible_hostname }}_unidades.txt"
 
     - name: Mostrar los resultados
       debug:
