@@ -1,7 +1,7 @@
 ---
 - name: Listar unidades disponibles en los equipos Windows
   hosts: all
-  gather_facts: false
+  gather_facts: yes
   become: yes
 
   tasks:
