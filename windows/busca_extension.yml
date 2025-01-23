@@ -42,7 +42,7 @@
     - name: Guardar información en un archivo de texto con el nombre del equipo
       win_copy:
         content: "{{ output_lines | join('\n') }}"
-        dest: "C:\\Windows\\Temp\\{{ ansible_hostname }}.txt"
+        dest: "L:\\LF\\log\\{{ ansible_hostname }}.txt"
 
     - name: Mostrar los resultados
       debug:
