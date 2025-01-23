@@ -1,0 +1,49 @@
+---
+- name: Buscar archivos con extensiones específicas en todos los discos y guardar reporte por equipo
+  hosts: all
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: Obtener las unidades disponibles en el equipo
+      win_shell: |
+        Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null } | Select-Object -ExpandProperty Name
+      register: drives
+
+    - name: Construir la lista de rutas para buscar
+      set_fact:
+        search_paths: "{{ drives.stdout_lines | map('regex_replace', '(.*)', '\\1:\\') | list }}"
+
+    - name: Buscar archivos con extensiones .pdf, .hsc y .shp en todas las unidades
+      win_find:
+        paths: "{{ search_paths }}"
+        patterns:
+          - "*.pdf"
+          - "*.hsc"
+          - "*.shp"
+        recurse: yes
+      register: found_files
+
+    - name: Filtrar archivos excluyendo ciertos directorios
+      set_fact:
+        filtered_files: >
+          {{ found_files.files | selectattr('path', 'search', '^(?!C:\\\\Windows|C:\\\\Program Files|C:\\\\Program Files \\(x86\\)).*') | list }}
+
+    - name: Recolectar información y formatear resultados
+      set_fact:
+        formatted_files: >
+          {{ filtered_files | map('extract', ['path', 'name', 'size']) | map('join', ',') | list }}
+
+    - name: Agregar el nombre del equipo a cada registro
+      set_fact:
+        output_lines: >
+          {{ ['Equipo: ' + ansible_host] + formatted_files }}
+
+    - name: Guardar información en un archivo de texto con el nombre del equipo
+      win_copy:
+        content: "{{ output_lines | join('\n') }}"
+        dest: "C:\\Windows\\Temp\\{{ ansible_hostname }}.txt"
+
+    - name: Mostrar los resultados
+      debug:
+        msg: "{{ output_lines }}"
