@@ -33,7 +33,7 @@
     - name: Guardar las rutas de las unidades en un archivo de texto
       win_copy:
         content: "{{ search_paths | join('\n') }}"
-        dest: "L:\\LF\\log\\{{ ansible_hostname }}_unidades.txt"
+        dest: "c:\\temp\\{{ ansible_hostname }}_unidades.txt"
 
     - name: Mostrar hora de finalización - Guardar las rutas en archivo
       debug:
