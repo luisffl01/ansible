@@ -1,0 +1,48 @@
+---
+- name: Listar unidades disponibles en los equipos Windows
+  hosts: all
+  gather_facts: false
+  become: yes
+
+  tasks:
+    - name: Obtener las unidades disponibles en el equipo
+      win_shell: |
+        Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null } | Select-Object -ExpandProperty Name
+      register: drives
+
+    - name: Mostrar hora de finalización - Obtener las unidades disponibles
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+
+    - name: Construir la lista de rutas para las unidades disponibles
+      set_fact:
+        search_paths: "{{ drives.stdout_lines | map('regex_replace', '^(.*)$', '\\1:\\\\') | list }}"
+
+    - name: Mostrar hora de finalización - Construir la lista de rutas
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+
+    - name: Verificar las rutas generadas
+      debug:
+        var: search_paths
+
+    - name: Mostrar hora de finalización - Verificar las rutas generadas
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+
+    - name: Guardar las rutas de las unidades en un archivo de texto
+      win_copy:
+        content: "{{ search_paths | join('\n') }}"
+        dest: "L:\\LF\\log\\{{ ansible_hostname }}_unidades.txt"
+
+    - name: Mostrar hora de finalización - Guardar las rutas en archivo
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+
+    - name: Mostrar las rutas generadas
+      debug:
+        msg: "Unidades disponibles en {{ ansible_hostname }}: {{ search_paths }}"
+
+    - name: Mostrar hora de finalización - Mostrar las rutas generadas
+      debug:
+        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
