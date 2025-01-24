@@ -24,7 +24,7 @@
     - name: Guardar las rutas de las unidades en un archivo de texto
       win_copy:
         content: "{{ csv_data }}"
-        dest: "c:\\temp\\{{ ansible_hostname }}_unidades.csv"
+        dest: "C:\\Users\\Public\\{{ ansible_hostname }}_unidades.csv"
 
     - name: Mostrar hora de finalización script
       debug:
