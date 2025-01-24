@@ -9,18 +9,10 @@
       win_shell: |
         Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null } | Select-Object -ExpandProperty Name
       register: drives
-    
-    - name: Mostrar hora de finalización - Obtener las unidades disponibles
-      debug:
-        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
 
     - name: Construir la lista de rutas para buscar
       set_fact:
         search_paths: "{{ drives.stdout_lines | map('regex_replace', '^(.*)$', '\\1:\\\\') | list }}"
-    
-    - name: Mostrar hora de finalización - Construir la lista de rutas para buscar
-      debug:
-        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
 
     - name: Verificar las rutas generadas
       debug:
@@ -30,44 +22,32 @@
       win_find:
         paths: "{{ search_paths }}"
         patterns:
-          - "*.pdf"
-          #- "*.hsc"
           - "*.shp"
+          - "*.gdb"
+          - "*.hsc"
+          - "*.pet"
+
         recurse: yes
       register: found_files
-
-    - name: Mostrar hora de finalización - Buscar archivos con extensiones
-      debug:
-        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
 
     - name: Filtrar archivos excluyendo ciertos directorios
       set_fact:
         filtered_files: >
-          {{ found_files.files | selectattr('path', 'search', '^(?!C:\\\\Windows|C:\\\\Program Files|C:\\\\Program Files \\(x86\\)).*') | list }}
+          {{ found_files.files | selectattr('path', 'search', '^(?!C:\\\\Windows|C:\\\\Program Files|C:\\\\Program Files \\(x86\\)|C:\\\\$Recycle.Bin).*') | list }}
 
-    - name: Mostrar hora de finalización - Filtrar
-      debug:
-        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
-
-    - name: Recolectar información y formatear resultados
+    - name: Recolectar información y formatear resultados en CSV
       set_fact:
-        formatted_files: >
-          {{ filtered_files | map('extract', ['path', 'name', 'size']) | map('join', ',') | list }}
+        csv_data: >
+          Nombre del Archivo,Ruta,Tamaño (bytes)
+          {{ filtered_files | map('extract', ['name', 'path', 'size']) | map('join', ',') | join('\n') }}
 
-    - name: Mostrar hora de finalización - formatear resultados
-      debug:
-        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
-
-    - name: Agregar el nombre del equipo a cada registro
+    - name: Agregar encabezado y nombre del equipo al archivo CSV
       set_fact:
-        output_lines: >
-          {{ ['Equipo: ' + ansible_hostname] + formatted_files }}
+        output_csv: >
+          Equipo: {{ ansible_hostname }}
+          {{ csv_data }}
 
-    - name: Guardar información en un archivo de texto con el nombre del equipo
+    - name: Guardar información en un archivo CSV con el nombre del equipo
       win_copy:
-        content: "{{ output_lines | join('\n') }}"
-        dest: "c:\\temp\\{{ ansible_hostname }}_unidades.txt"
-
-    - name: Mostrar los resultados
-      debug:
-        msg: "{{ output_lines }}"
+        content: "{{ output_csv }}"
+        dest: "C:\\Users\\Public\\{{ ansible_hostname }}_unidades.txt"
