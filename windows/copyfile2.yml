@@ -1,0 +1,24 @@
+---
+# copia archivos windows de un folder a otro
+- name: copia archivo hostname
+  hosts: all 
+  gather_facts: yes
+  
+  vars:
+    source: '\\remoteserver'
+    destination: 'c:\localpath'
+    user: 'user' 
+    passw: 'pass'
+
+  tasks:
+  - name: copia archivos
+    ansible.windows.win_copy:
+      src: '{{ source }}'
+      dest: '{{ destination }}'
+      remote_src: yes
+    vars:
+      ansible_become: true
+      ansible_become_method: runas
+      ansible_become_user: '{{ user }}'
+      ansible_become_pass: '{{ passw }}'
+    
