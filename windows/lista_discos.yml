@@ -10,39 +10,23 @@
         Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null } | Select-Object -ExpandProperty Name
       register: drives
 
-    - name: Mostrar hora de finalización - Obtener las unidades disponibles
-      debug:
-        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+    - name: Obtener el nombre del usuario actual
+      win_shell: |
+        [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+      register: current_user
 
-    - name: Construir la lista de rutas para las unidades disponibles
+    - name: Construir datos para el archivo CSV
       set_fact:
-        search_paths: "{{ drives.stdout_lines | map('regex_replace', '^(.*)$', '\\1:\\\\') | list }}"
-
-    - name: Mostrar hora de finalización - Construir la lista de rutas
-      debug:
-        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
-
-    - name: Verificar las rutas generadas
-      debug:
-        var: search_paths
-
-    - name: Mostrar hora de finalización - Verificar las rutas generadas
-      debug:
-        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
+        csv_data: |
+          Nombre de Máquina,Usuario,Unidades
+          {{ ansible_hostname }},{{ current_user.stdout.strip() }},{{ drives.stdout_lines | join(' ') }}
 
     - name: Guardar las rutas de las unidades en un archivo de texto
       win_copy:
-        content: "{{ search_paths | join('\n') }}"
-        dest: "c:\\temp\\{{ ansible_hostname }}_unidades.txt"
+        content: "{{ csv_data }}"
+        dest: "c:\\temp\\{{ ansible_hostname }}_unidades.csv"
 
-    - name: Mostrar hora de finalización - Guardar las rutas en archivo
+    - name: Mostrar hora de finalización script
       debug:
         msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
 
-    - name: Mostrar las rutas generadas
-      debug:
-        msg: "Unidades disponibles en {{ ansible_hostname }}: {{ search_paths }}"
-
-    - name: Mostrar hora de finalización - Mostrar las rutas generadas
-      debug:
-        msg: "Hora de finalización: {{ '%Y-%m-%d %H:%M:%S' | strftime }}"
