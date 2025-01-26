@@ -31,11 +31,13 @@
     - name: Buscar archivos con extensiones específicas en todas las unidades
       win_find:
         paths: "{{ search_paths }}"
-        patterns:temp
+        patterns:
           - "*.shp"
           - "*.gdb"
           - "*.hsc"
           - "*.pet"
+          - "*.pet"
+
         recurse: yes
       register: found_files
 
