@@ -5,6 +5,11 @@
   become: yes
 
   tasks:
+    - name: Crear la carpeta C:\temp si no existe
+      win_file:
+        path: C:\temp
+        state: directory
+
     - name: Obtener las unidades disponibles en el equipo
       win_shell: |
         Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null } | Select-Object -ExpandProperty Name
@@ -14,19 +19,23 @@
       set_fact:
         search_paths: "{{ drives.stdout_lines | map('regex_replace', '^(.*)$', '\\1:\\\\') | list }}"
 
+    - name: Validar que existan rutas de búsqueda
+      fail:
+        msg: "No se encontraron unidades disponibles para buscar archivos."
+      when: search_paths | length == 0
+
     - name: Verificar las rutas generadas
       debug:
         var: search_paths
 
-    - name: Buscar archivos con extensiones .pdf, .hsc y .shp en todas las unidades
+    - name: Buscar archivos con extensiones específicas en todas las unidades
       win_find:
         paths: "{{ search_paths }}"
-        patterns:
+        patterns:temp
           - "*.shp"
           - "*.gdb"
           - "*.hsc"
           - "*.pet"
-
         recurse: yes
       register: found_files
 
@@ -41,13 +50,11 @@
           Nombre del Archivo,Ruta,Tamaño (bytes)
           {{ filtered_files | map('extract', ['name', 'path', 'size']) | map('join', ',') | join('\n') }}
 
-    - name: Agregar encabezado y nombre del equipo al archivo CSV
-      set_fact:
-        output_csv: >
-          Equipo: {{ ansible_hostname }}
-          {{ csv_data }}
-
     - name: Guardar información en un archivo CSV con el nombre del equipo
       win_copy:
-        content: "{{ output_csv }}"
-        dest: "C:\\Users\\Public\\{{ ansible_hostname }}_unidades.txt"
+        content: "{{ csv_data }}"
+        dest: "C:\\temp\\{{ ansible_hostname }}_archivos.csv"
+
+    - name: Mostrar mensaje de finalización
+      debug:
+        msg: "La información se ha guardado en C:\\temp\\{{ ansible_hostname }}_archivos.csv"
