@@ -36,7 +36,7 @@
           - "*.gdb"
           - "*.hsc"
           - "*.pet"
-          - "*.pet"
+          - "*.zgy"
 
         recurse: yes
       register: found_files
@@ -50,7 +50,7 @@
       set_fact:
         csv_data: >
           Nombre del Archivo,Ruta,Tamaño (bytes)
-          {{ filtered_files | map('extract', ['name', 'path', 'size']) | map('join', ',') | join('\n') }}
+          {{ filtered_files | map('extract', ['path', 'size','creationtime','lastaccesstime','lastwritetime']) | map('join', ',') | join('\n') }}
 
     - name: Guardar información en un archivo CSV con el nombre del equipo
       win_copy:
