@@ -2,7 +2,8 @@
 # Ping a Equipos
 - name: ping
   hosts: all 
-  gather_facts: false
+  gather_facts: yes
+  ignore_unreachable: yes
   tasks:
   - name: ping
     win_ping:
