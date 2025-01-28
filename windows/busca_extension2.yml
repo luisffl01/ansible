@@ -29,6 +29,13 @@
         paths: "{{ search_paths }}"
         patterns:
           - "*.shp"
+          - "*.gdb"
+          - "*.hsc"
+          - "*.dgw"
+          - "*.dxf"
+          - "*.pet"
+          - "*.zgy"
+
         recurse: yes
         age: 0
       register: found_files
