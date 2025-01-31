@@ -12,10 +12,14 @@
     grupo: "sudo"
 
   tasks:
+    - name: Hashear la contraseña
+      set_fact:
+        password_hashed: "{{ user_password | password_hash('sha512') }}"
+
     - name: Crear el usuario
       user:
         name: "{{ username }}"
-        password: "{{ user_password }}"
+        password: "{{ password_hashed }}"
         shell: "{{ user_shell }}"
         home: "{{ user_home }}"
         state: present
