@@ -5,7 +5,7 @@
   gather_facts: false
 
   vars:
-    username: "nuevo_usuario"  # Reemplazar con el nombre del usuario
+    username: "usuario"
     user_password: "{{ 'secure_password' | password_hash('sha512') }}"  # Cambiar la contraseña según sea necesario
     user_shell: "/bin/bash"
     user_home: "/home/{{ username }}"
