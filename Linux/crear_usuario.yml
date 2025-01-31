@@ -5,8 +5,8 @@
   gather_facts: false
 
   vars:
-    #username: "usuario"
-    #user_password: "{{ 'secure_password' | password_hash('sha512') }}"  # Cambiar la contraseña según sea necesario
+    username: "usuario"
+    user_password: "{{ 'secure_password' | password_hash('sha512') }}"  # Cambiar la contraseña según sea necesario
     user_shell: "/bin/bash"
     user_home: "/home/{{ username }}"
     grupo: "sudo"
