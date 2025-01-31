@@ -28,13 +28,69 @@
       win_find:
         paths: "{{ search_paths }}"
         patterns:
-          - "*.shp"
-          - "*.gdb"
-          - "*.hsc"
-          - "*.dgw"
+          - "*.amx"
+          - "*.dat"
+          - "*.data"
+          - "*.depth"
+          - "*.dlf"
+          - "*.dlis"
+          - "*.dwg"
           - "*.dxf"
+          - "*.emr"
+          - "*.fac"
+          - "*.fopt"
+          - "*.gap"
+          - "*.gdb"
+          - "*.gsc"
+          - "*.gsd"
+          - "*.gsm"
+          - "*.hrz"
+          - "*.hsc"
+          - "*.init"
+          - "*.inv"
+          - "*.ip"
+          - "*.las"
+          - "*.ltc"
+          - "*.ltg"
+          - "*.ltm"
+          - "*.map"
+          - "*.mbal"
+          - "*.mod"
+          - "*.mve"
+          - "*.nxs"
+          - "*.pan"
+          - "*.pdt"
           - "*.pet"
+          - "*.pim"
+          - "*.pmh"
+          - "*.pmi"
+          - "*.pmm"
+          - "*.pmo"
+          - "*.pms"
+          - "*.prp "
+          - "*.rda"
+          - "*.rdp"
+          - "*.rpt"
+          - "*.segy"
+          - "*.seis"
+          - "*.shp"
+          - "*.sim"
+          - "*.smspec"
+          - "*.snf"
+          - "*.snp"
+          - "*.sph"
+          - "*.sps"
+          - "*.srf"
+          - "*.str"
+          - "*.tlp"
+          - "*.tlpx"
+          - "*.tpx"
+          - "*.unsmry"
+          - "*.vel"
+          - "*.vol"
+          - "*.wfl"
           - "*.zgy"
+
         recurse: yes
         age: 0
       register: found_files
@@ -73,9 +129,9 @@
         $header = "Equipo,Path,Size (bytes),CreationTime,LastWriteTime,LastAccessTime"
         $csvData = @()
         foreach ($file in $data) {
-          $creationTime = (Get-Date $file.creationtime -Format "yyyy-MM-dd HH:mm:ss")
-          $lastWriteTime = (Get-Date $file.lastwritetime -Format "yyyy-MM-dd HH:mm:ss")
-          $lastAccessTime = (Get-Date $file.lastaccesstime -Format "yyyy-MM-dd HH:mm:ss")
+          $creationTime = if ($file.creationtime) { $file.creationtime } else { "-" }
+          $lastWriteTime = if ($file.lastwritetime) { $file.lastwritetime } else { "-" }
+          $lastAccessTime = if ($file.lastaccesstime) { $file.lastaccesstime } else { "-" }
           $csvData += "$hostname,$($file.path),$($file.size),$creationTime,$lastWriteTime,$lastAccessTime"
         }
         $csvPath = "C:\\temp\\${hostname}_file_report.csv"
