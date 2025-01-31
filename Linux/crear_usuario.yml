@@ -9,6 +9,7 @@
     user_password: "{{ 'secure_password' | password_hash('sha512') }}"  # Cambiar la contraseña según sea necesario
     user_shell: "/bin/bash"
     user_home: "/home/{{ username }}"
+    grupo: "sudo"
 
   tasks:
     - name: Crear el usuario
@@ -30,7 +31,7 @@
     - name: Agregar el usuario al grupo sudo (opcional)
       user:
         name: "{{ username }}"
-        groups: "sudo"
+        groups: "{{ grupo }}"
         append: yes
 
     - name: Configurar mensaje de bienvenida (motd) para el usuario (opcional)
