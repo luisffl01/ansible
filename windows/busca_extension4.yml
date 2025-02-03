@@ -1,0 +1,142 @@
+---
+- name: Buscar archivos con extensiones específicas en todos los discos y guardar reporte por equipo
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Crear la carpeta C:\temp si no existe
+      win_file:
+        path: C:\temp
+        state: directory
+
+    - name: Obtener las unidades disponibles en el equipo
+      win_shell: |
+        Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null } | Select-Object -ExpandProperty Name
+      register: drives
+
+    - name: Construir la lista de rutas para buscar
+      set_fact:
+        search_paths: "{{ drives.stdout_lines | map('regex_replace', '^(.*)$', '\\1:\\\\') | list }}"
+
+    - name: Validar que existan rutas de búsqueda
+      fail:
+        msg: "No se encontraron unidades disponibles para buscar archivos."
+      when: search_paths | length == 0
+
+    - name: Buscar archivos con extensiones específicas en todas las unidades (limitando profundidad)
+      win_find:
+        paths: "{{ search_paths }}"
+        patterns:
+          - "*.amx"
+          - "*.dat"
+          - "*.data"
+          - "*.depth"
+          - "*.dlf"
+          - "*.dlis"
+          - "*.dwg"
+          - "*.dxf"
+          - "*.emr"
+          - "*.fac"
+          - "*.fopt"
+          - "*.gap"
+          - "*.gdb"
+          - "*.gsc"
+          - "*.gsd"
+          - "*.gsm"
+          - "*.hrz"
+          - "*.hsc"
+          - "*.init"
+          - "*.inv"
+          - "*.ip"
+          - "*.las"
+          - "*.ltc"
+          - "*.ltg"
+          - "*.ltm"
+          - "*.map"
+          - "*.mbal"
+          - "*.mod"
+          - "*.mve"
+          - "*.nxs"
+          - "*.pan"
+          - "*.pdt"
+          - "*.pet"
+          - "*.pim"
+          - "*.pmh"
+          - "*.pmi"
+          - "*.pmm"
+          - "*.pmo"
+          - "*.pms"
+          - "*.prp "
+          - "*.rda"
+          - "*.rdp"
+          - "*.rpt"
+          - "*.segy"
+          - "*.seis"
+          - "*.shp"
+          - "*.sim"
+          - "*.smspec"
+          - "*.snf"
+          - "*.snp"
+          - "*.sph"
+          - "*.sps"
+          - "*.srf"
+          - "*.str"
+          - "*.tlp"
+          - "*.tlpx"
+          - "*.tpx"
+          - "*.unsmry"
+          - "*.vel"
+          - "*.vol"
+          - "*.wfl"
+          - "*.zgy"
+
+        recurse: yes
+                                                         
+        age: 0
+      register: found_files
+      ignore_errors: yes # EVITAMOS QUE UN ERROR DETENGA EL PLAYBOOK
+
+    - name: Validar que todos los archivos tienen los atributos requeridos
+      set_fact:
+        valid_files: >
+          {{ found_files.files | selectattr('path', 'defined') 
+                               | selectattr('size', 'defined') 
+                               | selectattr('creationtime', 'defined') 
+                               | selectattr('lastwritetime', 'defined') 
+                               | selectattr('lastaccesstime', 'defined') 
+                               | list }}
+
+    - name: Verificar si hay archivos válidos
+      fail:
+        msg: "No se encontraron archivos válidos para incluir en el reporte."
+      when: valid_files | length == 0
+
+    - name: Guardar datos en un archivo temporal JSON
+      copy:
+        content: "{{ valid_files | to_nice_json }}"
+        dest: "C:\\temp\\valid_files.json"
+
+    - name: Generar archivo CSV con resultados
+      win_shell: |
+        $jsonPath = "C:\\temp\\valid_files.json"
+        $data = Get-Content -Path $jsonPath | ConvertFrom-Json
+        $hostname = $env:COMPUTERNAME
+        $header = "Equipo,Path,Size (bytes),CreationTime,LastWriteTime,LastAccessTime"
+        $csvData = @()
+        foreach ($file in $data) {
+          $creationTime = if ($file.creationtime) { $file.creationtime } else { "-" }
+          $lastWriteTime = if ($file.lastwritetime) { $file.lastwritetime } else { "-" }
+          $lastAccessTime = if ($file.lastaccesstime) { $file.lastaccesstime } else { "-" }
+          $csvData += "$hostname,$($file.path),$($file.size),$creationTime,$lastWriteTime,$lastAccessTime"
+        }
+        $csvPath = "C:\\temp\\${hostname}_file_report.csv"
+        $header | Out-File -FilePath $csvPath -Encoding UTF8
+        $csvData | Out-File -FilePath $csvPath -Append -Encoding UTF8
+        Write-Output "CSV generado en $csvPath"
+      args:
+        executable: powershell
+
+    - name: Registrar mensaje de éxito
+      debug:
+        msg: "El archivo CSV ha sido generado con el nombre del equipo en C:\\temp\\<equipo>_file_report.csv"
