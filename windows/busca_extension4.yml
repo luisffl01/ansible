@@ -128,7 +128,7 @@
           $creationTime = if ($file.creationtime) { $file.creationtime } else { "-" }
           $lastWriteTime = if ($file.lastwritetime) { $file.lastwritetime } else { "-" }
           $lastAccessTime = if ($file.lastaccesstime) { $file.lastaccesstime } else { "-" }
-          $csvData += "$hostname,$($file.path),$($file.size),$creationTime,$lastWriteTime,$lastAccessTime"
+          $csvData += "$hostname,`"$($file.path)`",$($file.size),$creationTime,$lastWriteTime,$lastAccessTime"
         }
         $csvPath = "C:\\temp\\${hostname}_file_report.csv"
         $header | Out-File -FilePath $csvPath -Encoding UTF8
