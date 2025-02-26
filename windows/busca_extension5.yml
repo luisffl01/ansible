@@ -28,7 +28,7 @@
       win_shell: |
         $extensions = @("*.amx", "*.dat", "*.data", "*.depth", "*.dlf", "*.dlis", "*.dwg", "*.dxf", "*.emr", "*.fac", "*.fopt", "*.gap", "*.gdb", "*.gsc", "*.gsd", "*.gsm", "*.hrz", "*.hsc", "*.init", "*.inv", "*.ip", "*.las", "*.ltc", "*.ltg", "*.ltm", "*.map", "*.mbal", "*.mod", "*.mve", "*.nxs", "*.pan", "*.pdt", "*.pet", "*.pim", "*.pmh", "*.pmi", "*.pmm", "*.pmo", "*.pms", "*.prp", "*.rda", "*.rdp", "*.rpt", "*.segy", "*.seis", "*.shp", "*.sim", "*.smspec", "*.snf", "*.snp", "*.sph", "*.sps", "*.srf", "*.str", "*.tlp", "*.tlpx", "*.tpx", "*.unsmry", "*.vel", "*.vol", "*.wfl", "*.zgy")
         $results = @()
-        $searchPaths = {{ search_paths | to_json }}
+        $searchPaths = @({{ search_paths | join(', ') }})
         foreach ($drive in $searchPaths) {
           foreach ($ext in $extensions) {
             $files = Get-ChildItem -Path $drive -Recurse -Filter $ext -ErrorAction SilentlyContinue | Select-Object FullName, Length, CreationTime, LastWriteTime, LastAccessTime
