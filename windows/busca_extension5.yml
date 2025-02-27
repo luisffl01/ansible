@@ -49,11 +49,11 @@
     - name: Guardar datos en un archivo temporal JSON
       copy:
         content: "{{ found_files.stdout }}"
-        dest: "C:\\temp\\valid_files2.json"
+        dest: "C:\\temp\\valid_files3.json"
 
     - name: Generar archivo CSV con resultados
       win_shell: |
-        $jsonPath = "C:\\temp\\valid_files2.json"
+        $jsonPath = "C:\\temp\\valid_files3.json"
         $data = Get-Content -Path $jsonPath | ConvertFrom-Json
         $hostname = $env:COMPUTERNAME
         $header = "Equipo,Path,Size (bytes),CreationTime,LastWriteTime,LastAccessTime"
