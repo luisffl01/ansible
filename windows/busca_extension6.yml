@@ -1,0 +1,52 @@
+---
+- name: Buscar archivos con extensiones específicas en todos los discos y guardar reporte por equipo
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Crear la carpeta C:\temp si no existe
+      win_file:
+        path: C:\temp
+        state: directory
+
+    - name: Obtener las unidades disponibles en el equipo
+      win_shell: |
+        Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null } | Select-Object -ExpandProperty Name
+      register: drives
+
+    - name: Construir la lista de rutas para buscar
+      set_fact:
+        search_paths: "{{ drives.stdout_lines | map('regex_replace', '^(.*)$', '\\1:\\\\') | list }}"
+
+    - name: Validar que existan rutas de búsqueda
+      fail:
+        msg: "No se encontraron unidades disponibles para buscar archivos."
+      when: search_paths | length == 0
+
+    - name: Buscar archivos con PowerShell en todas las unidades
+      win_shell: |
+        $extensions = @("*.amx", "*.dat", "*.data", "*.depth", "*.dlf", "*.dlis", "*.dwg", "*.dxf", "*.emr", "*.fac", "*.fopt", "*.gap", "*.gdb", "*.gsc", "*.gsd", "*.gsm", "*.hrz", "*.hsc", "*.init", "*.inv", "*.ip", "*.las", "*.ltc", "*.ltg", "*.ltm", "*.map", "*.mbal", "*.mod", "*.mve", "*.nxs", "*.pan", "*.pdt", "*.pet", "*.pim", "*.pmh", "*.pmi", "*.pmm", "*.pmo", "*.pms", "*.prp", "*.rda", "*.rdp", "*.rpt", "*.segy", "*.seis", "*.shp", "*.sim", "*.smspec", "*.snf", "*.snp", "*.sph", "*.sps", "*.srf", "*.str", "*.tlp", "*.tlpx", "*.tpx", "*.unsmry", "*.vel", "*.vol", "*.wfl", "*.zgy")
+        $searchPaths = @({{ search_paths | map('regex_replace', '\\\\', '\\\\\\\\') | join(', ') }})
+        $hostname = $env:COMPUTERNAME
+        $outputFile = "C:\\temp\\${hostname}_file_report3.csv"
+
+        # Crear encabezado del CSV
+        "Equipo,Path,Size (bytes),CreationTime,LastWriteTime,LastAccessTime" | Out-File -FilePath $outputFile -Encoding UTF8
+
+        foreach ($drive in $searchPaths) {
+          foreach ($ext in $extensions) {
+            Get-ChildItem -Path $drive -Recurse -Filter $ext -ErrorAction SilentlyContinue |
+            ForEach-Object {
+              $line = "$hostname,`"$($_.FullName)`",$($_.Length),$($_.CreationTime),$($_.LastWriteTime),$($_.LastAccessTime)"
+              Add-Content -Path $outputFile -Value $line
+            }
+          }
+        }
+        Write-Output "CSV generado en $outputFile"
+      register: found_files
+      ignore_errors: yes
+
+    - name: Registrar mensaje de éxito
+      debug:
+        msg: "El archivo CSV ha sido generado con el nombre del equipo en C:\\temp\\<equipo>_file_report3.csv"
