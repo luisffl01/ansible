@@ -27,7 +27,7 @@
     - name: Buscar archivos con PowerShell en todas las unidades
       win_shell: |
         $extensions = @("*.amx", "*.dat", "*.data", "*.depth", "*.dlf", "*.dlis", "*.dwg", "*.dxf", "*.emr", "*.fac", "*.fopt", "*.gap", "*.gdb", "*.gsc", "*.gsd", "*.gsm", "*.hrz", "*.hsc", "*.init", "*.inv", "*.ip", "*.las", "*.ltc", "*.ltg", "*.ltm", "*.map", "*.mbal", "*.mod", "*.mve", "*.nxs", "*.pan", "*.pdt", "*.pet", "*.pim", "*.pmh", "*.pmi", "*.pmm", "*.pmo", "*.pms", "*.prp", "*.rda", "*.rdp", "*.rpt", "*.segy", "*.seis", "*.shp", "*.sim", "*.smspec", "*.snf", "*.snp", "*.sph", "*.sps", "*.srf", "*.str", "*.tlp", "*.tlpx", "*.tpx", "*.unsmry", "*.vel", "*.vol", "*.wfl", "*.zgy")
-        $searchPaths = @({{ search_paths | map('regex_replace', '\\\\', '\\\\\\\\') | join(', ') }})
+        $searchPaths = @({{ search_paths | map('regex_replace', '^(.*)$', '"\1"') | join(', ') }})
         $hostname = $env:COMPUTERNAME
         $outputFile = "C:\\temp\\${hostname}_file_report3.csv"
 
