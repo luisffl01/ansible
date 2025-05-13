@@ -1,0 +1,16 @@
+# crea usaurio
+- name: Crear usuario de sistema operativo
+  hosts: all 
+  become: yes
+  gather_facts: false
+
+  tasks:
+    - name: Hashear la nueva contraseña
+      set_fact:
+        password_hashed: "{{ user_password | password_hash('sha512') }}"
+
+    - name: Cambiar la contraseña del usuario
+      user:
+        name: "{{ username }}"
+        password: "{{ password_hashed }}"
+        update_password: always
