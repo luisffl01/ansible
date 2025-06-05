@@ -1,0 +1,26 @@
+# crea usaurio
+- name: Crear usuario de sistema operativo
+  hosts: all 
+  become: yes
+  gather_facts: false
+
+  tasks:
+      - name: Obtener usuarios con UID >= 1000 (excepto nobody)
+        command: "awk -F: '$3 >= 1000 && $3 != 65534 { print $1 }' /etc/passwd"
+        register: usuarios
+
+      - name: Mostrar usuarios y sus grupos
+        loop: "{{ usuarios.stdout_lines }}"
+        vars:
+          usuario: "{{ item }}"
+        command: id -nG {{ usuario }}
+        register: grupos_usuario
+        loop_control:
+          label: "{{ item }}"
+
+      - name: Imprimir usuarios y grupos
+        debug:
+          msg: >
+            Usuario: {{ grupos_usuario.results[loop.index0].item }},
+            Grupos: {{ grupos_usuario.results[loop.index0].stdout }}
+        loop: "{{ usuarios.stdout_lines }}"
