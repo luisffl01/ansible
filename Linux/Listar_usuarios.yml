@@ -9,18 +9,16 @@
         command: "awk -F: '$3 >= 1000 && $3 != 65534 { print $1 }' /etc/passwd"
         register: usuarios
 
-      - name: Mostrar usuarios y sus grupos
+      - name: Obtener grupos de cada usuario
+        shell: "id -nG {{ item }}"
         loop: "{{ usuarios.stdout_lines }}"
-        vars:
-          usuario: "{{ item }}"
-        command: id -nG {{ usuario }}
         register: grupos_usuario
         loop_control:
           label: "{{ item }}"
 
-      - name: Imprimir usuarios y grupos
+      - name: Mostrar usuarios y sus grupos
         debug:
-          msg: >
-            Usuario: {{ grupos_usuario.results[loop.index0].item }},
-            Grupos: {{ grupos_usuario.results[loop.index0].stdout }}
-        loop: "{{ usuarios.stdout_lines }}"
+          msg: |
+            Usuario: {{ item.item }}
+            Grupos: {{ item.stdout }}
+        loop: "{{ grupos_usuario.results }}"
