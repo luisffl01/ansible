@@ -1,5 +1,5 @@
 # crea usaurio
-- name: Crear usuario de sistema operativo
+- name: Listar usuarios de sistema operativo
   hosts: all 
   become: yes
   gather_facts: false
