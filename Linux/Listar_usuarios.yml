@@ -22,3 +22,5 @@
             Usuario: {{ item.item }}
             Grupos: {{ item.stdout }}
         loop: "{{ grupos_usuario.results }}"
+        loop_control:
+          label: "{{ item.item }}"
