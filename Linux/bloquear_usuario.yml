@@ -8,29 +8,28 @@
     user_to_block: "usuario_bloqueado"  # Reemplazar con el nombre del usuario a bloquear
 
   tasks:
-    - name: Deshabilitar el acceso al usuario
-      user:
-        name: "{{ user_to_block }}"
-        shell: /sbin/nologin
-
-    - name: Bloquear la cuenta del usuario
-      command: "usermod -L {{ user_to_block }}"
-      args:
-        warn: false
-
-    - name: Verificar si existen procesos en ejecución del usuario
+    - name: Verificar si el usuario tiene procesos en ejecución
       shell: "pgrep -u {{ user_to_block }} || true"
       register: user_processes
 
-    - name: Finalizar procesos en ejecución del usuario (si existen)
-      shell: "pkill -u {{ user_to_block }}"
+    - name: Mostrar mensaje si el usuario tiene procesos activos
+      debug:
+        msg: "El usuario {{ user_to_block }} tiene procesos activos y no será bloqueado."
       when: user_processes.stdout != ""
-      ignore_errors: yes
 
-    - name: Confirmar que el usuario ha sido bloqueado
+    - name: Bloquear la cuenta del usuario si NO tiene procesos activos
+      ansible.builtin.user:
+        name: "{{ user_to_block }}"
+        shell: /sbin/nologin
+        password_lock: true
+      when: user_processes.stdout == ""
+
+    - name: Confirmar estado del usuario
       shell: "passwd -S {{ user_to_block }}"
       register: user_status
+      when: user_processes.stdout == ""
 
     - name: Mostrar estado del usuario bloqueado
       debug:
         msg: "Estado del usuario {{ user_to_block }}: {{ user_status.stdout }}"
+      when: user_processes.stdout == ""
