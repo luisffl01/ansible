@@ -4,9 +4,6 @@
   become: yes
   gather_facts: false
 
-  vars:
-    user_to_block: "usuario_bloqueado"  # Reemplazar con el nombre del usuario a bloquear
-
   tasks:
     - name: Verificar si el usuario tiene procesos en ejecución
       shell: "pgrep -u {{ user_to_block }} || true"
